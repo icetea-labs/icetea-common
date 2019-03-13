@@ -1,0 +1,35 @@
+{
+  "name": "icetea-common",
+  "version": "0.1.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TradaTech/icetea-common.git"
+  },
+  "author": "Trada Tech",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TradaTech/icetea-common/issues"
+  },
+  "homepage": "https://github.com/TradaTech/icetea-common#readme",
+  "dependencies": {
+    "crypto": "^1.0.1",
+    "deterministic-json": "^1.0.5",
+    "eosjs-ecc": "^4.0.4",
+    "msgpack-lite": "^0.1.26",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.3.4",
+    "@babel/preset-env": "^7.3.4",
+    "babel-loader": "^8.0.5",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.2.3"
+  }
+}
