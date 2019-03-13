@@ -1,4 +1,4 @@
-/*! icetea-common v0.1.0 */
+/*! icetea-common v0.1.1 */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -37822,9 +37822,15 @@ var ecc = __webpack_require__(/*! ./icetea-common/ecc */ "./src/icetea-common/ec
 
 var Tx = __webpack_require__(/*! ./icetea-common/Tx */ "./src/icetea-common/Tx.js");
 
+var _require = __webpack_require__(/*! ./icetea-common/enum */ "./src/icetea-common/enum.js"),
+    ContractMode = _require.ContractMode,
+    TxOp = _require.TxOp;
+
 exports.codec = codec;
 exports.ecc = ecc;
 exports.Tx = Tx;
+exports.ContractMode = ContractMode;
+exports.TxOp = TxOp;
 
 /***/ }),
 
