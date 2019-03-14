@@ -1,4 +1,4 @@
-/*! icetea-common v0.1.1 */
+/*! icetea-common v0.1.4 */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
