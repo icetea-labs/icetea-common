@@ -32,6 +32,12 @@ module.exports = class {
       throw new Error('Value and fee cannot be negative.')
     }
 
+    if (typeof this.data.op !== 'undefined' &&
+      this.data.op !== TxOp.CALL_CONTRACT &&
+      this.data.op !== TxOp.DEPLOY_CONTRACT) {
+      throw new Error(`Invalid TxOp: ${data.op}`)
+    }
+
     const content = {
       from: this.from,
       to: this.to,
