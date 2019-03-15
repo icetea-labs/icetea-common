@@ -15,7 +15,7 @@ const babelPlugins = [runtyper].filter(Boolean)
 const outFile = path.basename(packageJson.browser)
 
 module.exports = {
-  mode: 'production',
+  mode: 'development',
   entry: './src/index.js',
   output: {
     path: path.resolve(outDir),
@@ -25,10 +25,6 @@ module.exports = {
     globalObject: 'this' // https://github.com/webpack/webpack/issues/6525
   },
   devtool: 'source-map',
-  node: {
-    Buffer: false
-  },
-  externals: { buffer: 'root Buffer' },
   module: {
     rules: [
       {
