@@ -4,7 +4,7 @@
 
 const msgpack = require('msgpack-lite')
 const json = require('deterministic-json')
-const { createHash } = require('crypto')
+const createHash = require('create-hash')
 
 exports.encode = msgpack.encode
 exports.decode = msgpack.decode

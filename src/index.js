@@ -1,7 +1,7 @@
-const codec = require('./icetea-common/codec')
-const ecc = require('./icetea-common/ecc')
-const Tx = require('./icetea-common/Tx')
-const {ContractMode, TxOp} = require('./icetea-common/enum')
+const codec = require('./codec')
+const ecc = require('./ecc')
+const Tx = require('./Tx')
+const { ContractMode, TxOp } = require('./enum')
 
 exports.codec = codec
 exports.ecc = ecc
