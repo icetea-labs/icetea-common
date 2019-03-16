@@ -8,3 +8,5 @@ console.log(ecc.newKeyPair())
 console.log(ecc.newKeyPairWithAddress())
 
 ecc.validateAddress('tea_3kpNpVJMiz2DQbR4y8dnK9LNiSv6')
+
+console.log(ecc.newAccount())
