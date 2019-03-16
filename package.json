@@ -1,6 +1,6 @@
 {
   "name": "icetea-common",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Common functions for icetea and icetea-web3.",
   "sideEffects": false,
   "main": "src/index.js",
@@ -29,9 +29,10 @@
   },
   "dependencies": {
     "create-hash": "^1.2.0",
-    "deterministic-json": "^1.0.5",
-    "eosjs-ecc": "^4.0.4",
-    "msgpack-lite": "^0.1.26"
+    "json-stable-stringify": "^1.0.1",
+    "msgpack-lite": "^0.1.26",
+    "randombytes": "^2.1.0",
+    "secp256k1": "^3.6.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",

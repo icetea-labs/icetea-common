@@ -3,14 +3,14 @@
 // others (protobuf3, amino, bson, RLP) if desired
 
 const msgpack = require('msgpack-lite')
-const json = require('deterministic-json')
+const stringify = require('json-stable-stringify')
 const createHash = require('create-hash')
 
 exports.encode = msgpack.encode
 exports.decode = msgpack.decode
 
-exports.stringify = json.stringify
-exports.parse = json.parse
+exports.stringify = stringify
+exports.parse = JSON.parse
 
 exports.sha256 = (content, enc) => {
   if (typeof content !== 'string') {
