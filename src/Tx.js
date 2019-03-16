@@ -1,5 +1,5 @@
 const { TxOp } = require('./enum')
-const { sha256 } = require('./codec')
+const { validateAddress, stableHashObject } = require('./ecc')
 
 module.exports = class {
   // create contract
@@ -16,12 +16,7 @@ module.exports = class {
   //
   // Some op in the future: set alias/options, vote, etc.
 
-  constructor (from, to, value, fee, data, nonce) {
-    if (!from) {
-      throw new Error('Transaction "from" is required.')
-    }
-
-    this.from = from || ''
+  constructor (to, value, fee, data, nonce) {
     this.to = to || ''
     this.value = parseFloat(value) || 0
     this.fee = parseFloat(fee) || 0
@@ -38,15 +33,28 @@ module.exports = class {
       throw new Error(`Invalid TxOp: ${data.op}`)
     }
 
+    if (!this.to) {
+      if (this.data.op !== TxOp.DEPLOY_CONTRACT) {
+        throw new Error("Transaction 'to' is required.")
+      }
+    } else {
+      if (this.data.op === TxOp.DEPLOY_CONTRACT) {
+        throw new Error("Cannot set transaction 'to' when deploying a contract.")
+      }
+      const isAlias = !!this.to.indexOf('.')
+      if (!isAlias) {
+        validateAddress(this.to)
+      }
+    }
+
     const content = {
-      from: this.from,
       to: this.to,
       value: this.value,
       fee: this.fee,
       data: this.data,
       nonce: this.nonce
     }
-    this.signatureMessage = sha256(content, 'base64')
+    this.signatureMessage = stableHashObject(content, 'base64')
   }
 
   setSignature (signature) {

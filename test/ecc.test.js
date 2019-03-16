@@ -1,9 +1,10 @@
 const { ecc } = require('../src')
 const configKey = ecc.generateKey()
-const from = ecc.toPublicKey(configKey)
-console.log(from)
-
-const ecc2 = require('../src/ecc')
-console.log(ecc2.toPublicKey(configKey))
+const pub = ecc.toPublicKey(configKey)
+console.log(pub)
+console.log(ecc.toAddress(pub))
 
 console.log(ecc.newKeyPair())
+console.log(ecc.newKeyPairWithAddress())
+
+ecc.validateAddress('tea_3kpNpVJMiz2DQbR4y8dnK9LNiSv6')
