@@ -6,6 +6,5 @@ exports.ContractMode = Object.freeze({
 
 exports.TxOp = Object.freeze({
   DEPLOY_CONTRACT: 0,
-  CALL_CONTRACT: 1,
-  VOTE: 2
+  CALL_CONTRACT: 1
 })

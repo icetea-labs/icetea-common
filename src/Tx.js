@@ -21,7 +21,7 @@ module.exports = class {
     this.value = parseFloat(value) || 0
     this.fee = parseFloat(fee) || 0
     this.data = data || {}
-    this.nonce = nonce || Date.now() // FIXME
+    this.nonce = nonce || (Date.now() + Math.random()) // FIXME
 
     if (this.value < 0 || this.fee < 0) {
       throw new Error('Value and fee cannot be negative.')

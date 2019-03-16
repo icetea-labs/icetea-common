@@ -1,5 +1,3 @@
-const Tx = require('./Tx')
-
 const randomBytes = require('randombytes')
 const createHash = require('create-hash')
 const secp256k1 = require('secp256k1')
@@ -10,11 +8,7 @@ const PREFIX = 'tea'
 const SEPARATOR = '_'
 
 function _ensureBuffer(text, enc = 'base64') {
-  if (typeof text === 'string') {
-    return Buffer.from(text, enc)
-  }
-
-  return text
+  return typeof text === 'string' ? Buffer.from(text, enc) : text
 }
 
 const t = {
@@ -48,12 +42,6 @@ const t = {
     return secp256k1.verify(_ensureBuffer(message), _ensureBuffer(signature), _ensureBuffer(pubKey))
   },
 
-  verifyTxSignature: function (tx) {
-    if (!t.verify(tx.signature, tx.signatureMessage, tx.publicKey)) {
-      throw new Error('Invalid signature')
-    }
-  },
-
   generateKeyBuffer: function () {
     let privKey
     do {
@@ -75,7 +63,7 @@ const t = {
   },
 
   toAddress: function (publicKey, enc = 'base64') {
-    const r160Buf = createHash('ripemd160').update(_ensureBuffer(publicKey)).digest()
+    const r160Buf = createHash('ripemd160').update(_ensureBuffer(publicKey, enc)).digest()
     return PREFIX + SEPARATOR + base58.encode(r160Buf)
   },
 
@@ -104,51 +92,6 @@ const t = {
 
   sign: function (message, privateKey) {
     return secp256k1.sign(_ensureBuffer(message), _ensureBuffer(privateKey))
-  },
-
-  newAccount: function () {
-    return t.getAccount(t.generateKeyBuffer())
-  },
-
-  getAccount: function (privateKey, privateKeyEnc = 'base64') {
-    if (!privateKey || !(typeof privateKey === 'string' || Buffer.isBuffer(privateKey))) {
-      throw new Error('Invalid private key. Private key must be a Buffer or a string.')
-    }
-    privateKey = _ensureBuffer(privateKey, privateKeyEnc)
-    if (privateKey.length !== 32) {
-      throw new Error('Invalid private key length.')
-    }
-
-    const publicKey = t.toPublicKeyBuffer(privateKey)
-    const address = t.toAddress(publicKey)
-    const sign = function (message) {
-      return t.sign(message, privateKey)
-    }
-    const signTxData = function (txData, enc = 'base64') {
-      return t.signTxData(txData, privateKey, enc)
-    }
-
-    return {
-      address,
-      publicKey,
-      privateKey,
-      sign,
-      signTxData
-    }
-  },
-
-  signTxData: function (txData, privateKey, enc = 'base64') {
-    txData.publicKey = t.toPublicKey()
-    const tx = new Tx(txData.to, txData.value, txData.fee, txData.data, txData.nonce)
-    txData.signature = t.sign(tx.signatureMessage, privateKey).signature.toString(enc)
-    if (!txData.nonce) {
-      txData.nonce = tx.nonce
-    }
-    if (typeof txData.data !== 'string') {
-      txData.data = JSON.stringify(txData.data)
-    }
-
-    return txData
   },
 
   stableHashObject: function (obj, enc) {
