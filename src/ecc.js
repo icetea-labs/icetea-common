@@ -3,7 +3,6 @@ const createHash = require('create-hash')
 const secp256k1 = require('secp256k1')
 
 const {
-  toBuffer,
   toKeyBuffer,
   toKeyString,
   toDataBuffer,
@@ -39,10 +38,6 @@ const t = {
     if (len !== 20) {
       throw new Error('Invalid address length.')
     }
-  },
-
-  verify: function (signature, message, pubKey) {
-    return secp256k1.verify(toDataBuffer(message), toDataBuffer(signature), toKeyBuffer(pubKey))
   },
 
   generateKeyBuffer: function () {
@@ -116,8 +111,12 @@ const t = {
     return keys
   },
 
-  sign: function (message, privateKey) {
-    return secp256k1.sign(toBuffer(message, 'utf8'), toKeyBuffer(privateKey))
+  verify: function (hash32bytes, signature, pubKey) {
+    return secp256k1.verify(toDataBuffer(hash32bytes), toDataBuffer(signature), toKeyBuffer(pubKey))
+  },
+
+  sign: function (hash32bytes, privateKey) {
+    return secp256k1.sign(toDataBuffer(hash32bytes), toKeyBuffer(privateKey))
   },
 
   stableHashObject: function (obj) {

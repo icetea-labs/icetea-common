@@ -36,7 +36,7 @@ function signTransaction (txData, privateKey) {
   privateKey = toKeyBuffer(privateKey)
   txData.publicKey = ecc.toPublicKey(privateKey)
   const tx = new Tx(txData.to, txData.value, txData.fee, txData.data, txData.nonce)
-  txData.signature = toDataString(ecc.sign(tx.signatureMessage, privateKey).signature)
+  txData.signature = toDataString(ecc.sign(tx.sigHash, privateKey).signature)
 
   if (!txData.nonce) {
     txData.nonce = tx.nonce
@@ -49,7 +49,7 @@ function signTransaction (txData, privateKey) {
 }
 
 function verifyTxSignature (tx) {
-  if (!ecc.verify(tx.signature, tx.signatureMessage, tx.publicKey)) {
+  if (!ecc.verify(tx.sigHash, tx.signature, tx.publicKey)) {
     throw new Error('Invalid signature')
   }
 }

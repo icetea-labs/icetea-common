@@ -54,7 +54,7 @@ module.exports = class {
       data: this.data,
       nonce: this.nonce
     }
-    this.signatureMessage = stableHashObject(content)
+    this.sigHash = stableHashObject(content)
   }
 
   setSignature (signature) {
