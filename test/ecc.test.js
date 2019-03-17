@@ -1,4 +1,5 @@
-const { ecc } = require('../src')
+const { ecc, utils } = require('../src')
+
 const configKey = ecc.generateKey()
 const pub = ecc.toPublicKey(configKey)
 console.log(pub)
@@ -9,4 +10,4 @@ console.log(ecc.newKeyPairWithAddress())
 
 ecc.validateAddress('tea_3kpNpVJMiz2DQbR4y8dnK9LNiSv6')
 
-console.log(ecc.newAccount())
+console.log(utils.newAccount())

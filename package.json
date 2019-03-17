@@ -1,6 +1,6 @@
 {
   "name": "icetea-common",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "Common functions for icetea and icetea-web3.",
   "sideEffects": false,
   "main": "src/index.js",

@@ -2,14 +2,17 @@ const randomBytes = require('randombytes')
 const createHash = require('create-hash')
 const secp256k1 = require('secp256k1')
 
-const { base58, stableStringify } = require('./codec')
+const {
+  toBuffer,
+  toKeyBuffer,
+  toKeyString,
+  toDataBuffer,
+  stableStringify,
+  DATA_ENCODING
+} = require('./codec')
 
 const PREFIX = 'tea'
 const SEPARATOR = '_'
-
-function _ensureBuffer(text, enc = 'base64') {
-  return typeof text === 'string' ? Buffer.from(text, enc) : text
-}
 
 const t = {
   validateAddress: function (address) {
@@ -27,7 +30,7 @@ const t = {
 
     let len
     try {
-      len = base58.decode(address).length
+      len = toKeyBuffer(address).length
     } catch (err) {
       err.message = 'Invalid address: ' + err.message
       throw err
@@ -39,7 +42,7 @@ const t = {
   },
 
   verify: function (signature, message, pubKey) {
-    return secp256k1.verify(_ensureBuffer(message), _ensureBuffer(signature), _ensureBuffer(pubKey))
+    return secp256k1.verify(toDataBuffer(message), toDataBuffer(signature), toKeyBuffer(pubKey))
   },
 
   generateKeyBuffer: function () {
@@ -50,59 +53,79 @@ const t = {
     return privKey
   },
 
-  generateKey: function (enc = 'base64') {
-    return t.generateKeyBuffer().toString(enc)
+  generateKey: function () {
+    return toKeyString(t.generateKeyBuffer())
   },
 
   toPublicKeyBuffer: function (privateKey) {
-    return secp256k1.publicKeyCreate(_ensureBuffer(privateKey))
+    return secp256k1.publicKeyCreate(toKeyBuffer(privateKey))
   },
 
-  toPublicKey: function (privateKey, enc = 'base64') {
-    return t.toPublicKeyBuffer(privateKey).toString(enc)
+  toPublicKey: function (privateKey) {
+    return toKeyString(t.toPublicKeyBuffer(privateKey))
   },
 
-  toAddress: function (publicKey, enc = 'base64') {
-    const r160Buf = createHash('ripemd160').update(_ensureBuffer(publicKey, enc)).digest()
-    return PREFIX + SEPARATOR + base58.encode(r160Buf)
+  toAddress: function (publicKey) {
+    const r160Buf = createHash('ripemd160').update(toKeyBuffer(publicKey)).digest()
+    return PREFIX + SEPARATOR + toKeyString(r160Buf)
   },
 
-  toPubKeyAndAddress: function (privKey, enc = 'base64') {
+  toPubKeyAndAddressBuffer: function (privKey) {
     const publicKey = t.toPublicKeyBuffer(privKey)
     return {
-      publicKey: publicKey.toString(enc),
-      address: t.toAddress(publicKey, enc)
+      publicKey,
+      address: t.toAddress(publicKey)
     }
   },
 
-  newKeyPair: function (enc = 'base64') {
+  toPubKeyAndAddress: function (privKey) {
+    const { publicKey, address } = t.toPubKeyAndAddressBuffer(privKey)
+    return {
+      publicKey: toKeyString(publicKey),
+      address
+    }
+  },
+
+  newKeyPairBuffer: function () {
     const privateKey = t.generateKeyBuffer()
     return {
-      publicKey: t.toPublicKey(privateKey, enc),
-      privateKey: privateKey.toString(enc)
+      publicKey: t.toPublicKeyBuffer(privateKey),
+      privateKey: privateKey
     }
   },
 
-  newKeyPairWithAddress: function (enc = 'base64') {
+  newKeyPair: function () {
+    const { publicKey, privateKey } = t.newKeyPairBuffer()
+    return {
+      publicKey: toKeyString(publicKey),
+      privateKey: toKeyString(privateKey)
+    }
+  },
+
+  newKeyPairWithAddressBuffer: function () {
     const privateKey = t.generateKeyBuffer()
-    const keys = t.toPubKeyAndAddress(privateKey, enc)
-    keys.privateKey = privateKey.toString(enc)
+    const keys = t.toPubKeyAndAddressBuffer(privateKey)
+    keys.privateKey = privateKey
+    return keys
+  },
+
+  newKeyPairWithAddress: function () {
+    const privateKey = t.generateKeyBuffer()
+    const keys = t.toPubKeyAndAddress(privateKey)
+    keys.privateKey = toKeyString(privateKey)
     return keys
   },
 
   sign: function (message, privateKey) {
-    return secp256k1.sign(_ensureBuffer(message), _ensureBuffer(privateKey))
+    return secp256k1.sign(toBuffer(message, 'utf8'), toKeyBuffer(privateKey))
   },
 
-  stableHashObject: function (obj, enc) {
+  stableHashObject: function (obj) {
     if (typeof obj !== 'string') {
       obj = stableStringify(obj)
     }
     const hash = createHash('sha256').update(obj)
-    if (enc) {
-      return hash.digest(enc) // Text
-    }
-    return hash.digest() // Buffer
+    return hash.digest(DATA_ENCODING)
   }
 
 }
