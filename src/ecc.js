@@ -119,14 +119,13 @@ const t = {
     return secp256k1.sign(toDataBuffer(hash32bytes), toKeyBuffer(privateKey))
   },
 
-  stableHashObject: function (obj) {
+  stableHashObject: function (obj, enc = DATA_ENCODING) {
     if (typeof obj !== 'string') {
       obj = stableStringify(obj)
     }
     const hash = createHash('sha256').update(obj)
-    return hash.digest(DATA_ENCODING)
+    return enc ? hash.digest(enc) : hash.digest()
   }
-
 }
 
 module.exports = t
