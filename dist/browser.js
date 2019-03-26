@@ -21834,12 +21834,14 @@ var t = {
     return secp256k1.sign(toDataBuffer(hash32bytes), toKeyBuffer(privateKey));
   },
   stableHashObject: function stableHashObject(obj) {
+    var enc = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : DATA_ENCODING;
+
     if (typeof obj !== 'string') {
       obj = stableStringify(obj);
     }
 
     var hash = createHash('sha256').update(obj);
-    return hash.digest(DATA_ENCODING);
+    return enc ? hash.digest(enc) : hash.digest();
   }
 };
 module.exports = t;
