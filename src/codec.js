@@ -42,6 +42,30 @@ const toString = (buf, enc = KEY_ENCODING) => {
 
   return buf.toString(enc)
 }
+// BUFFER to ARRAY (8bits to 5bits)
+const base32Encode = (buffer) => {
+  var length = buffer.byteLength
+  var view = new Uint8Array(buffer)
+
+  var bits = 0
+  var value = 0
+  var output = []
+
+  for (var i = 0; i < length; i++) {
+    value = (value << 8) | view[i]
+    bits += 8
+
+    while (bits >= 5) {
+      output.push((value >>> (bits - 5)) & 31)
+      bits -= 5
+    }
+  }
+
+  if (bits > 0) {
+    output.push((value << (5 - bits)) & 31)
+  }
+  return output
+}
 
 // Decode & encode of OBJECT <-> BUFFER
 // It is more space-efficient than OBJECT stringify to JSON then convert to Buffer utf8
@@ -55,6 +79,7 @@ exports.decode = msgpack.decode
 exports.KEY_ENCODING = KEY_ENCODING
 exports.toKeyBuffer = text => toBuffer(text, KEY_ENCODING)
 exports.toKeyString = buf => toString(buf, KEY_ENCODING)
+exports.base32Encode = buf => base32Encode(buf)
 
 exports.DATA_ENCODING = DATA_ENCODING
 exports.toDataBuffer = text => toBuffer(text, DATA_ENCODING)
