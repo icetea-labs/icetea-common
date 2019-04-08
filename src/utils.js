@@ -45,6 +45,8 @@ function signTransaction (txData, privateKey) {
     txData.data = JSON.stringify(txData.data)
   }
 
+  delete txData.from // save some bits
+
   return txData
 }
 
