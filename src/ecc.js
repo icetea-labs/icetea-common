@@ -1,43 +1,38 @@
 const randomBytes = require('randombytes')
 const createHash = require('create-hash')
 const secp256k1 = require('secp256k1')
+const { encode, decode } = require('./bech32')
 
 const {
   toKeyBuffer,
   toKeyString,
+  base32Encode,
   toDataBuffer,
   stableStringify,
   DATA_ENCODING
 } = require('./codec')
 
 const PREFIX = 'tea'
-const SEPARATOR = '_'
 
 const t = {
   validateAddress: function (address) {
-    const parts = address.split(SEPARATOR)
-    if (parts.length !== 2) {
-      throw new Error('Invalid address prefix.')
-    }
-
-    const prefix = parts[0]
-    address = parts[1]
-
-    if (prefix !== PREFIX && !/^\d+$/.test(prefix)) {
-      throw new Error('Invalid address prefix.')
-    }
-
     let len
     try {
-      len = toKeyBuffer(address).length
+      var result = decode(address)
+      const prefix = result.hrp
+      if (prefix !== PREFIX && !/^\d+$/.test(prefix)) {
+        throw new Error('Invalid address prefix.')
+      }
+      len = result.data.length
     } catch (err) {
       err.message = 'Invalid address: ' + err.message
       throw err
     }
 
-    if (len !== 20) {
+    if (len !== 32) {
       throw new Error('Invalid address length.')
     }
+    return true
   },
 
   generateKeyBuffer: function () {
@@ -62,7 +57,8 @@ const t = {
 
   toAddress: function (publicKey) {
     const r160Buf = createHash('ripemd160').update(toKeyBuffer(publicKey)).digest()
-    return PREFIX + SEPARATOR + toKeyString(r160Buf)
+    const data = base32Encode(r160Buf)
+    return encode(PREFIX, data)
   },
 
   toPubKeyAndAddressBuffer: function (privKey) {
