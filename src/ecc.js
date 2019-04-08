@@ -55,10 +55,10 @@ const t = {
     return toKeyString(t.toPublicKeyBuffer(privateKey))
   },
 
-  toAddress: function (publicKey) {
+  toAddress: function (publicKey, hrp = PREFIX) {
     const r160Buf = createHash('ripemd160').update(toKeyBuffer(publicKey)).digest()
     const data = base32Encode(r160Buf)
-    return encode(PREFIX, data)
+    return encode(hrp, data)
   },
 
   toPubKeyAndAddressBuffer: function (privKey) {

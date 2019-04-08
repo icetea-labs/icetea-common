@@ -21937,9 +21937,10 @@ var t = {
     return toKeyString(t.toPublicKeyBuffer(privateKey));
   },
   toAddress: function toAddress(publicKey) {
+    var hrp = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : PREFIX;
     var r160Buf = createHash('ripemd160').update(toKeyBuffer(publicKey)).digest();
     var data = base32Encode(r160Buf);
-    return encode(PREFIX, data);
+    return encode(hrp, data);
   },
   toPubKeyAndAddressBuffer: function toPubKeyAndAddressBuffer(privKey) {
     var publicKey = t.toPublicKeyBuffer(privKey);
@@ -22119,6 +22120,8 @@ function signTransaction(txData, privateKey) {
   if (typeof txData.data !== 'string') {
     txData.data = JSON.stringify(txData.data);
   }
+
+  delete txData.from; // save some bits
 
   return txData;
 }
