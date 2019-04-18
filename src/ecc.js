@@ -1,18 +1,18 @@
 const randomBytes = require('randombytes')
 const createHash = require('create-hash')
 const secp256k1 = require('secp256k1')
-const { encode, decode } = require('./bech32')
 
 const {
   toKeyBuffer,
   toKeyString,
-  base32Encode,
+  toAddressString,
   toDataBuffer,
   stableStringify,
   DATA_ENCODING
 } = require('./codec')
 
 const PREFIX = 'tea'
+const CONTRACT_PREFIX = 'ctea'
 
 const t = {
   validateAddress: function (address) {
@@ -20,7 +20,7 @@ const t = {
     try {
       var result = decode(address)
       const prefix = result.hrp
-      if (prefix !== PREFIX && !/^\d+$/.test(prefix)) {
+      if (prefix !== PREFIX && prefix !== CONTRACT_PREFIX) {
         throw new Error('Invalid address prefix.')
       }
       len = result.data.length
@@ -55,10 +55,14 @@ const t = {
     return toKeyString(t.toPublicKeyBuffer(privateKey))
   },
 
-  toAddress: function (publicKey) {
+  toAddress: function (publicKey, prefix = PREFIX) {
+    // do we need to sha256 first?
     const r160Buf = createHash('ripemd160').update(toKeyBuffer(publicKey)).digest()
-    const data = base32Encode(r160Buf)
-    return encode(PREFIX, data)
+    return toAddressString(r160Buf, prefix)
+  },
+
+  toContractAddress: function(uniqueContent) {
+    return t.toAddress(uniqueContent, CONTRACT_PREFIX)
   },
 
   toPubKeyAndAddressBuffer: function (privKey) {

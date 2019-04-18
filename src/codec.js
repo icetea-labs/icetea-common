@@ -9,6 +9,8 @@ const basex = require('base-x')
 const ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
 const base58 = basex(ALPHABET)
 
+const bech32 = require('./bech32')
+
 const KEY_ENCODING = 'base58'
 const TX_ENCODING = 'msgpack'
 const DATA_ENCODING = 'base64'
@@ -42,8 +44,13 @@ const toString = (buf, enc = KEY_ENCODING) => {
 
   return buf.toString(enc)
 }
+
+const toAddressString = (buf, prefix) => {
+  return bech32.encode(prefix, _8to5bits(buf))
+}
+
 // BUFFER to ARRAY (8bits to 5bits)
-const base32Encode = (buffer) => {
+const _8to5bits = (buffer) => {
   var length = buffer.byteLength
   var view = new Uint8Array(buffer)
 
@@ -79,7 +86,7 @@ exports.decode = msgpack.decode
 exports.KEY_ENCODING = KEY_ENCODING
 exports.toKeyBuffer = text => toBuffer(text, KEY_ENCODING)
 exports.toKeyString = buf => toString(buf, KEY_ENCODING)
-exports.base32Encode = buf => base32Encode(buf)
+exports.toAddressString = toAddressString
 
 exports.DATA_ENCODING = DATA_ENCODING
 exports.toDataBuffer = text => toBuffer(text, DATA_ENCODING)

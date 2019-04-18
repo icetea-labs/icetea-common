@@ -34,9 +34,14 @@ function getAccount (privateKey) {
 
 function signTransaction (txData, privateKey) {
   privateKey = toKeyBuffer(privateKey)
-  txData.publicKey = ecc.toPublicKey(privateKey)
+  txData.evidence = txData.evidence || []
+  const evidence = {}
+  
+  evidence.pubkey = ecc.toPublicKey(privateKey)
   const tx = new Tx(txData.to, txData.value, txData.fee, txData.data, txData.nonce)
-  txData.signature = toDataString(ecc.sign(tx.sigHash, privateKey).signature)
+  evidence.signature = toDataString(ecc.sign(tx.sigHash, privateKey).signature)
+
+  txData.evidence.push(evidence)
 
   if (!txData.nonce) {
     txData.nonce = tx.nonce
@@ -51,9 +56,16 @@ function signTransaction (txData, privateKey) {
 }
 
 function verifyTxSignature (tx) {
-  if (!ecc.verify(tx.sigHash, tx.signature, tx.publicKey)) {
-    throw new Error('Invalid signature')
+  let evidence = tx.evidence
+  if (!Array.isArray(evidence)) {
+    evidence = [evidence]
   }
+
+  evidence.forEach(e => {
+    if (!ecc.verify(tx.sigHash, e.signature, e.pubkey)) {
+      throw new Error('Invalid signature.')
+    }
+  })
 }
 
 module.exports = { signTransaction, verifyTxSignature, newAccount, getAccount }
