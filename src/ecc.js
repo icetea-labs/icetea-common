@@ -6,6 +6,7 @@ const {
   toKeyBuffer,
   toKeyString,
   toAddressString,
+  decodeAddress,
   toDataBuffer,
   stableStringify,
   DATA_ENCODING
@@ -18,7 +19,7 @@ const t = {
   validateAddress: function (address) {
     let len
     try {
-      var result = decode(address)
+      var result = decodeAddress(address)
       const prefix = result.hrp
       if (prefix !== PREFIX && prefix !== CONTRACT_PREFIX) {
         throw new Error('Invalid address prefix.')

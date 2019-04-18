@@ -86,7 +86,9 @@ exports.decode = msgpack.decode
 exports.KEY_ENCODING = KEY_ENCODING
 exports.toKeyBuffer = text => toBuffer(text, KEY_ENCODING)
 exports.toKeyString = buf => toString(buf, KEY_ENCODING)
+
 exports.toAddressString = toAddressString
+exports.decodeAddress = bech32.decode
 
 exports.DATA_ENCODING = DATA_ENCODING
 exports.toDataBuffer = text => toBuffer(text, DATA_ENCODING)
