@@ -21598,9 +21598,9 @@ function () {
   }
 
   _createClass(_class, [{
-    key: "setSignature",
-    value: function setSignature(signature) {
-      this.signature = signature;
+    key: "setEvidence",
+    value: function setEvidence(evidence) {
+      this.evidence = evidence;
       return this;
     }
   }, {
@@ -21853,6 +21853,7 @@ exports.toKeyString = function (buf) {
 };
 
 exports.toAddressString = toAddressString;
+exports.decodeAddress = bech32.decode;
 exports.DATA_ENCODING = DATA_ENCODING;
 
 exports.toDataBuffer = function (text) {
@@ -21889,6 +21890,7 @@ var _require = __webpack_require__(/*! ./codec */ "./src/codec.js"),
     toKeyBuffer = _require.toKeyBuffer,
     toKeyString = _require.toKeyString,
     toAddressString = _require.toAddressString,
+    decodeAddress = _require.decodeAddress,
     toDataBuffer = _require.toDataBuffer,
     stableStringify = _require.stableStringify,
     DATA_ENCODING = _require.DATA_ENCODING;
@@ -21900,7 +21902,7 @@ var t = {
     var len;
 
     try {
-      var result = decode(address);
+      var result = decodeAddress(address);
       var prefix = result.hrp;
 
       if (prefix !== PREFIX && prefix !== CONTRACT_PREFIX) {
