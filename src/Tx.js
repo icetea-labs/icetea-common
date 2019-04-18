@@ -57,7 +57,7 @@ module.exports = class {
     this.sigHash = stableHashObject(content)
   }
 
-  setEvidence(evidence) {
+  setEvidence (evidence) {
     this.evidence = evidence
     return this
   }

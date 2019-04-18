@@ -36,7 +36,7 @@ function signTransaction (txData, privateKey) {
   privateKey = toKeyBuffer(privateKey)
   txData.evidence = txData.evidence || []
   const evidence = {}
-  
+
   evidence.pubkey = ecc.toPublicKey(privateKey)
   const tx = new Tx(txData.to, txData.value, txData.fee, txData.data, txData.nonce)
   evidence.signature = toDataString(ecc.sign(tx.sigHash, privateKey).signature)

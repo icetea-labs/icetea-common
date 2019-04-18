@@ -56,14 +56,16 @@ const t = {
     return toKeyString(t.toPublicKeyBuffer(privateKey))
   },
 
-  toAddress: function (publicKey, prefix = PREFIX) {
-    // do we need to sha256 first?
-    const r160Buf = createHash('ripemd160').update(toKeyBuffer(publicKey)).digest()
-    return toAddressString(r160Buf, prefix)
+  toAddress: function (publicKey) {
+    const hash = createHash('sha256').update(toKeyBuffer(publicKey)).digest()
+    const r160Buf = createHash('ripemd160').update(hash).digest()
+    return toAddressString(r160Buf, PREFIX)
   },
 
-  toContractAddress: function(uniqueContent) {
-    return t.toAddress(uniqueContent, CONTRACT_PREFIX)
+  toContractAddress: function (uniqueContent) {
+    const hash = createHash('sha256').update(uniqueContent).digest()
+    const r160Buf = createHash('ripemd160').update(hash).digest()
+    return toAddressString(r160Buf, CONTRACT_PREFIX)
   },
 
   toPubKeyAndAddressBuffer: function (privKey) {
