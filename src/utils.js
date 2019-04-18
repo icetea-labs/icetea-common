@@ -55,17 +55,25 @@ function signTransaction (txData, privateKey) {
   return txData
 }
 
-function verifyTxSignature (tx) {
+function verifyTxSignature (tx, collectSigners = true) {
   let evidence = tx.evidence
   if (!Array.isArray(evidence)) {
     evidence = [evidence]
   }
 
+  const signers = []
   evidence.forEach(e => {
     if (!ecc.verify(tx.sigHash, e.signature, e.pubkey)) {
       throw new Error('Invalid signature.')
     }
+    if (collectSigners) {
+      signers.push(ecc.toAddress(e.pubkey))
+    }
   })
+
+  if (collectSigners) {
+    tx.signers = signers
+  }
 }
 
 module.exports = { signTransaction, verifyTxSignature, newAccount, getAccount }
