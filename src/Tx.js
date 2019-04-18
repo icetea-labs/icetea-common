@@ -57,8 +57,8 @@ module.exports = class {
     this.sigHash = stableHashObject(content)
   }
 
-  setSignature (signature) {
-    this.signature = signature
+  setEvidence(evidence) {
+    this.evidence = evidence
     return this
   }
 
