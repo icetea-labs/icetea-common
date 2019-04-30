@@ -22127,12 +22127,6 @@ function signTransaction(txData, privateKey) {
     txData.nonce = tx.nonce;
   }
 
-  if (typeof txData.data !== 'string') {
-    txData.data = JSON.stringify(txData.data);
-  }
-
-  delete txData.from; // save some bits
-
   return txData;
 }
 
