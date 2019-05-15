@@ -9,11 +9,27 @@ const {
   decodeAddress,
   toDataBuffer,
   stableStringify,
-  DATA_ENCODING
+  DATA_ENCODING,
+  BANK_ACCOUNT,
+  REGULAR_ACCOUNT,
+  isAddressType,
+  isAddressBufferType
 } = require('./codec')
 
-const PREFIX = 'tea'
-const CONTRACT_PREFIX = 'ctea'
+const PREFIX_MAINNET = 'team'
+const PREFIX_TESTNET = 'teat'
+
+function generateKeyBuffer(accountType = REGULAR_ACCOUNT) {
+  let privKey
+  do {
+    privKey = randomBytes(32)
+  } while (!secp256k1.privateKeyVerify(privKey))
+  return privKey
+}
+
+function generateKey(accountType = REGULAR_ACCOUNT) {
+  return toKeyString(generateKeyBuffer(accountType))
+}
 
 const t = {
   validateAddress: function (address) {
@@ -21,7 +37,7 @@ const t = {
     try {
       var result = decodeAddress(address)
       const prefix = result.hrp
-      if (prefix !== PREFIX && prefix !== CONTRACT_PREFIX) {
+      if (prefix !== PREFIX_MAINNET && prefix !== PREFIX_TESTNET) {
         throw new Error('Invalid address prefix.')
       }
       len = result.data.length
@@ -36,18 +52,6 @@ const t = {
     return true
   },
 
-  generateKeyBuffer: function () {
-    let privKey
-    do {
-      privKey = randomBytes(32)
-    } while (!secp256k1.privateKeyVerify(privKey))
-    return privKey
-  },
-
-  generateKey: function () {
-    return toKeyString(t.generateKeyBuffer())
-  },
-
   toPublicKeyBuffer: function (privateKey) {
     return secp256k1.publicKeyCreate(toKeyBuffer(privateKey))
   },
@@ -59,13 +63,23 @@ const t = {
   toAddress: function (publicKey) {
     const hash = createHash('sha256').update(toKeyBuffer(publicKey)).digest()
     const r160Buf = createHash('ripemd160').update(hash).digest()
-    return toAddressString(r160Buf, PREFIX)
+    return toAddressString(r160Buf, PREFIX_TESTNET)
   },
 
-  toContractAddress: function (uniqueContent) {
+  toContractAddress: function (uniqueContent, type = BANK_ACCOUNT) {
+    type = String(type)
+    if (![BANK_ACCOUNT, REGULAR_ACCOUNT].includes(type)) {
+      throw new Error(`Invalid account type: ${type}`)
+    }
+
     const hash = createHash('sha256').update(uniqueContent).digest()
-    const r160Buf = createHash('ripemd160').update(hash).digest()
-    return toAddressString(r160Buf, CONTRACT_PREFIX)
+    let r160Buf = createHash('ripemd160').update(hash).digest()
+
+    while (!isAddressBufferType(r160Buf, type)) {
+      r160Buf = createHash('ripemd160').update(r160Buf).digest()
+    }
+
+    return toAddressString(r160Buf, PREFIX_TESTNET)
   },
 
   toPubKeyAndAddressBuffer: function (privKey) {
@@ -84,33 +98,25 @@ const t = {
     }
   },
 
-  newKeyPairBuffer: function () {
-    const privateKey = t.generateKeyBuffer()
+  newKeyBuffers: function (accountType = REGULAR_ACCOUNT) {
+    let privateKey, publicKey, address
+    do {
+     privateKey = generateKeyBuffer()
+     publicKey = t.toPublicKeyBuffer(privateKey)
+     address = t.toAddress(publicKey)
+    } while (isAddressType(address, accountType))
+
     return {
-      publicKey: t.toPublicKeyBuffer(privateKey),
-      privateKey: privateKey
+      publicKey,
+      privateKey,
+      address
     }
   },
 
-  newKeyPair: function () {
-    const { publicKey, privateKey } = t.newKeyPairBuffer()
-    return {
-      publicKey: toKeyString(publicKey),
-      privateKey: toKeyString(privateKey)
-    }
-  },
-
-  newKeyPairWithAddressBuffer: function () {
-    const privateKey = t.generateKeyBuffer()
-    const keys = t.toPubKeyAndAddressBuffer(privateKey)
-    keys.privateKey = privateKey
-    return keys
-  },
-
-  newKeyPairWithAddress: function () {
-    const privateKey = t.generateKeyBuffer()
-    const keys = t.toPubKeyAndAddress(privateKey)
-    keys.privateKey = toKeyString(privateKey)
+  newKeys: function (accountType = REGULAR_ACCOUNT) {
+    const keys = t.newKeyBuffers(accountType)
+    keys.privateKey = toKeyString(keys.privateKey)
+    keys.publicKey = toKeyString(keys.publicKey)
     return keys
   },
 

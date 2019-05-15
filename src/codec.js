@@ -15,6 +15,9 @@ const KEY_ENCODING = 'base58'
 const TX_ENCODING = 'msgpack'
 const DATA_ENCODING = 'base64'
 
+const BANK_ACCOUNT = '1'
+const REGULAR_ACCOUNT = '0'
+
 // STRING to BUFFER, support base58
 const toBuffer = (text, enc = KEY_ENCODING) => {
   if (Buffer.isBuffer(text)) return text
@@ -48,6 +51,13 @@ const toString = (buf, enc = KEY_ENCODING) => {
 const toAddressString = (buf, prefix) => {
   return bech32.encode(prefix, _8to5bits(buf))
 }
+
+const isAddressType = (addr, type) => addr.charAt(4) === String(type)
+const isBankAddress = addr => isAddressType(addr, BANK_ACCOUNT)
+const isRegularAddress = addr => isAddressType(addr, REGULAR_ACCOUNT)
+
+const is5bitArrayType = (arr, type) => String(arr[0] % 2) === String(type)
+const is8bitBufType = (buf, type) => is5bitArrayType(_8to5bits(buf), type)
 
 // BUFFER to ARRAY (8bits to 5bits)
 const _8to5bits = (buffer) => {
@@ -87,8 +97,14 @@ exports.KEY_ENCODING = KEY_ENCODING
 exports.toKeyBuffer = text => toBuffer(text, KEY_ENCODING)
 exports.toKeyString = buf => toString(buf, KEY_ENCODING)
 
+exports.BANK_ACCOUNT = BANK_ACCOUNT
+exports.REGULAR_ACCOUNT = REGULAR_ACCOUNT
 exports.toAddressString = toAddressString
 exports.decodeAddress = bech32.decode
+exports.isAddressType = isAddressType
+exports.isBankAddress = isBankAddress
+exports.isRegularAddress = isRegularAddress
+exports.isAddressBufferType = is8bitBufType
 
 exports.DATA_ENCODING = DATA_ENCODING
 exports.toDataBuffer = text => toBuffer(text, DATA_ENCODING)

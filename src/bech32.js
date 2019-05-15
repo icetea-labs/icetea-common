@@ -49,7 +49,7 @@ function createChecksum (hrp, data) {
 
 function encode (hrp, data) {
   var combined = data.concat(createChecksum(hrp, data))
-  var ret = hrp + '1'
+  var ret = hrp + String(data[0] % 2)
   for (var p = 0; p < combined.length; ++p) {
     ret += CHARSET.charAt(combined[p])
   }
@@ -75,7 +75,7 @@ function decode (bechString) {
     return null
   }
   bechString = bechString.toLowerCase()
-  var pos = bechString.lastIndexOf('1')
+  var pos = 4 // team or teat
   if (pos < 1 || pos + 7 > bechString.length || bechString.length > 90) {
     return null
   }
