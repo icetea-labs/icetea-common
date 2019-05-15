@@ -88,6 +88,12 @@ function decode (bechString) {
     }
     data.push(d)
   }
+
+  const type = bechString.charAt(pos)
+  if (type !== String(data[0] % 2)) {
+    return null
+  }
+  
   if (!verifyChecksum(hrp, data)) {
     return null
   }

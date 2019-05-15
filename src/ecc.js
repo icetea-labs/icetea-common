@@ -19,16 +19,12 @@ const {
 const PREFIX_MAINNET = 'team'
 const PREFIX_TESTNET = 'teat'
 
-function generateKeyBuffer(accountType = REGULAR_ACCOUNT) {
+function generateKeyBuffer() {
   let privKey
   do {
     privKey = randomBytes(32)
   } while (!secp256k1.privateKeyVerify(privKey))
   return privKey
-}
-
-function generateKey(accountType = REGULAR_ACCOUNT) {
-  return toKeyString(generateKeyBuffer(accountType))
 }
 
 const t = {
@@ -72,14 +68,14 @@ const t = {
       throw new Error(`Invalid account type: ${type}`)
     }
 
-    const hash = createHash('sha256').update(uniqueContent).digest()
-    let r160Buf = createHash('ripemd160').update(hash).digest()
+    let hash = createHash('sha256').update(uniqueContent).digest()
 
-    while (!isAddressBufferType(r160Buf, type)) {
-      r160Buf = createHash('ripemd160').update(r160Buf).digest()
-    }
+    do {
+      hash = createHash('ripemd160').update(hash).digest()
+    } while (!isAddressBufferType(hash, type))
 
-    return toAddressString(r160Buf, PREFIX_TESTNET)
+
+    return toAddressString(hash, PREFIX_TESTNET)
   },
 
   toPubKeyAndAddressBuffer: function (privKey) {

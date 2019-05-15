@@ -21738,6 +21738,12 @@ function decode(bechString) {
     data.push(d);
   }
 
+  var type = bechString.charAt(pos);
+
+  if (type !== String(data[0] % 2)) {
+    return null;
+  }
+
   if (!verifyChecksum(hrp, data)) {
     return null;
   }
@@ -21931,7 +21937,6 @@ var PREFIX_MAINNET = 'team';
 var PREFIX_TESTNET = 'teat';
 
 function generateKeyBuffer() {
-  var accountType = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : REGULAR_ACCOUNT;
   var privKey;
 
   do {
@@ -21939,11 +21944,6 @@ function generateKeyBuffer() {
   } while (!secp256k1.privateKeyVerify(privKey));
 
   return privKey;
-}
-
-function generateKey() {
-  var accountType = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : REGULAR_ACCOUNT;
-  return toKeyString(generateKeyBuffer(accountType));
 }
 
 var t = {
@@ -21990,13 +21990,12 @@ var t = {
     }
 
     var hash = createHash('sha256').update(uniqueContent).digest();
-    var r160Buf = createHash('ripemd160').update(hash).digest();
 
-    while (!isAddressBufferType(r160Buf, type)) {
-      r160Buf = createHash('ripemd160').update(r160Buf).digest();
-    }
+    do {
+      hash = createHash('ripemd160').update(hash).digest();
+    } while (!isAddressBufferType(hash, type));
 
-    return toAddressString(r160Buf, PREFIX_TESTNET);
+    return toAddressString(hash, PREFIX_TESTNET);
   },
   toPubKeyAndAddressBuffer: function toPubKeyAndAddressBuffer(privKey) {
     var publicKey = t.toPublicKeyBuffer(privKey);
