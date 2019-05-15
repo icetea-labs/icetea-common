@@ -19,7 +19,7 @@ const {
 const PREFIX_MAINNET = 'team'
 const PREFIX_TESTNET = 'teat'
 
-function generateKeyBuffer() {
+function generateKeyBuffer () {
   let privKey
   do {
     privKey = randomBytes(32)
@@ -74,7 +74,6 @@ const t = {
       hash = createHash('ripemd160').update(hash).digest()
     } while (!isAddressBufferType(hash, type))
 
-
     return toAddressString(hash, PREFIX_TESTNET)
   },
 
@@ -97,9 +96,9 @@ const t = {
   newKeyBuffers: function (accountType = REGULAR_ACCOUNT) {
     let privateKey, publicKey, address
     do {
-     privateKey = generateKeyBuffer()
-     publicKey = t.toPublicKeyBuffer(privateKey)
-     address = t.toAddress(publicKey)
+      privateKey = generateKeyBuffer()
+      publicKey = t.toPublicKeyBuffer(privateKey)
+      address = t.toAddress(publicKey)
     } while (isAddressType(address, accountType))
 
     return {
