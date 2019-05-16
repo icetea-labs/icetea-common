@@ -29,23 +29,26 @@ function generateKeyBuffer () {
 
 const t = {
   validateAddress: function (address) {
-    let len
+    let result
     try {
-      var result = decodeAddress(address)
+      result = decodeAddress(address)
       const prefix = result.hrp
       if (prefix !== PREFIX_MAINNET && prefix !== PREFIX_TESTNET) {
         throw new Error('Invalid address prefix.')
       }
-      len = result.data.length
+      const type = result.type
+      if (type !== REGULAR_ACCOUNT && type !== BANK_ACCOUNT) {
+        throw new Error('Invalid account type.')
+      }
     } catch (err) {
       err.message = 'Invalid address: ' + err.message
       throw err
     }
 
-    if (len !== 32) {
+    if (result.data.length !== 32) {
       throw new Error('Invalid address length.')
     }
-    return true
+    return result
   },
 
   toPublicKeyBuffer: function (privateKey) {
@@ -99,7 +102,7 @@ const t = {
       privateKey = generateKeyBuffer()
       publicKey = t.toPublicKeyBuffer(privateKey)
       address = t.toAddress(publicKey)
-    } while (isAddressType(address, accountType))
+    } while (!isAddressType(address, accountType))
 
     return {
       publicKey,

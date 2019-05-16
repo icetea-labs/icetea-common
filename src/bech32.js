@@ -97,5 +97,5 @@ function decode (bechString) {
   if (!verifyChecksum(hrp, data)) {
     return null
   }
-  return { hrp: hrp, data: data.slice(0, data.length - 6) }
+  return { hrp: hrp, type: type, data: data.slice(0, data.length - 6) }
 }
