@@ -19,9 +19,9 @@ module.exports = class {
   constructor ({ from, to, payer, value, fee, data, nonce }) {
     this.from = from || ''
     this.to = to || ''
-    this.payer = String(payer || '')
+    this.payer = payer || ''
     this.value = String(value || '')
-    this.fee = fee || ''
+    this.fee = String(fee || '')
     this.data = data || {}
     this.nonce = nonce || (Date.now() + Math.random()) // FIXME
 
