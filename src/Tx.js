@@ -16,7 +16,7 @@ module.exports = class {
   //
   // Some op in the future: set alias/options, vote, etc.
 
-  constructor ({from, to, payer, value, fee, data, nonce}) {
+  constructor ({ from, to, payer, value, fee, data, nonce }) {
     this.from = from || ''
     this.to = to || ''
     this.payer = String(payer || '')
