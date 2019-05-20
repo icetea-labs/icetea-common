@@ -10,11 +10,11 @@ const {
   toDataBuffer,
   stableStringify,
   DATA_ENCODING,
-  BANK_ACCOUNT,
-  REGULAR_ACCOUNT,
   isAddressType,
   isAddressBufferType
 } = require('./codec')
+
+const { REGULAR_ACCOUNT, BANK_ACCOUNT } = require('./enum').AccountType
 
 const PREFIX_MAINNET = 'team'
 const PREFIX_TESTNET = 'teat'

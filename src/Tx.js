@@ -1,5 +1,5 @@
 const { TxOp } = require('./enum')
-const { validateAddress, stableHashObject } = require('./ecc')
+const { stableHashObject } = require('./ecc')
 
 module.exports = class {
   // create contract
@@ -25,30 +25,6 @@ module.exports = class {
     this.data = data || {}
     this.nonce = nonce || (Date.now() + Math.random()) // FIXME
 
-    // if (this.value < 0 || this.fee < 0) {
-    //   throw new Error('Value and fee cannot be negative.')
-    // }
-
-    if (typeof this.data.op !== 'undefined' &&
-      this.data.op !== TxOp.CALL_CONTRACT &&
-      this.data.op !== TxOp.DEPLOY_CONTRACT) {
-      throw new Error(`Invalid TxOp: ${data.op}`)
-    }
-
-    if (!this.to) {
-      if (this.data.op !== TxOp.DEPLOY_CONTRACT) {
-        throw new Error("Transaction 'to' is required.")
-      }
-    } else {
-      if (this.data.op === TxOp.DEPLOY_CONTRACT) {
-        throw new Error("Cannot set transaction 'to' when deploying a contract.")
-      }
-      // const isAlias = !!this.to.indexOf('.')
-      // if (!isAlias) {
-      //   validateAddress(this.to)
-      // }
-    }
-
     const content = {
       from: this.from,
       to: this.to,
@@ -64,6 +40,18 @@ module.exports = class {
   setEvidence (evidence) {
     this.evidence = evidence
     return this
+  }
+
+  messageName () {
+    return this.data == undefined ? undefined : this.data.name // eslint-disable-line
+  }
+
+  messageParams () {
+    return this.data == undefined ? undefined : (this.data.params || []) // eslint-disable-line
+  }
+
+  isSimpleTransfer () {
+    return this.data == undefined || this.data.op == undefined // eslint-disable-line
   }
 
   isContractCreation () {

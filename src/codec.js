@@ -15,8 +15,7 @@ const KEY_ENCODING = 'base58'
 const TX_ENCODING = 'msgpack'
 const DATA_ENCODING = 'base64'
 
-const BANK_ACCOUNT = '1'
-const REGULAR_ACCOUNT = '0'
+const { REGULAR_ACCOUNT, BANK_ACCOUNT } = require('./enum').AccountType
 
 // STRING to BUFFER, support base58
 const toBuffer = (text, enc = KEY_ENCODING) => {
@@ -97,8 +96,6 @@ exports.KEY_ENCODING = KEY_ENCODING
 exports.toKeyBuffer = text => toBuffer(text, KEY_ENCODING)
 exports.toKeyString = buf => toString(buf, KEY_ENCODING)
 
-exports.BANK_ACCOUNT = BANK_ACCOUNT
-exports.REGULAR_ACCOUNT = REGULAR_ACCOUNT
 exports.toAddressString = toAddressString
 exports.decodeAddress = bech32.decode
 exports.isAddressType = isAddressType
