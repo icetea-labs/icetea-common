@@ -111,11 +111,19 @@ const t = {
     }
   },
 
+  newBankKeyBuffers: function () {
+    return t.newKeyBuffers(BANK_ACCOUNT)
+  },
+
   newKeys: function (accountType = REGULAR_ACCOUNT) {
     const keys = t.newKeyBuffers(accountType)
     keys.privateKey = toKeyString(keys.privateKey)
     keys.publicKey = toKeyString(keys.publicKey)
     return keys
+  },
+
+  newBankKeys: function () {
+    return t.newKeys(BANK_ACCOUNT)
   },
 
   verify: function (hash32bytes, signature, pubKey) {

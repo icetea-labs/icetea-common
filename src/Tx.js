@@ -16,16 +16,18 @@ module.exports = class {
   //
   // Some op in the future: set alias/options, vote, etc.
 
-  constructor (to, value, fee, data, nonce) {
+  constructor ({from, to, payer, value, fee, data, nonce}) {
+    this.from = from || ''
     this.to = to || ''
-    this.value = parseFloat(value) || 0
-    this.fee = parseFloat(fee) || 0
+    this.payer = String(payer || '')
+    this.value = String(value || '')
+    this.fee = fee || ''
     this.data = data || {}
     this.nonce = nonce || (Date.now() + Math.random()) // FIXME
 
-    if (this.value < 0 || this.fee < 0) {
-      throw new Error('Value and fee cannot be negative.')
-    }
+    // if (this.value < 0 || this.fee < 0) {
+    //   throw new Error('Value and fee cannot be negative.')
+    // }
 
     if (typeof this.data.op !== 'undefined' &&
       this.data.op !== TxOp.CALL_CONTRACT &&
@@ -41,14 +43,16 @@ module.exports = class {
       if (this.data.op === TxOp.DEPLOY_CONTRACT) {
         throw new Error("Cannot set transaction 'to' when deploying a contract.")
       }
-      const isAlias = !!this.to.indexOf('.')
-      if (!isAlias) {
-        validateAddress(this.to)
-      }
+      // const isAlias = !!this.to.indexOf('.')
+      // if (!isAlias) {
+      //   validateAddress(this.to)
+      // }
     }
 
     const content = {
+      from: this.from,
       to: this.to,
+      payer: this.payer,
       value: this.value,
       fee: this.fee,
       data: this.data,
