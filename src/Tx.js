@@ -1,4 +1,4 @@
-const { TxOp } = require('./enum')
+const { TxOp, ContractMode } = require('./enum')
 const { stableHashObject } = require('./ecc')
 
 module.exports = class {
@@ -24,6 +24,15 @@ module.exports = class {
     this.fee = String(fee || '')
     this.data = data || {}
     this.nonce = nonce || (Date.now() + Math.random()) // FIXME
+
+    // some validation
+    if (this.isContractCreation()) {
+      if (this.data.mode !== undefined && this.data.mode !== ContractMode.JS_RAW && this.data.mode !== ContractMode.WASM) {
+        throw new Error('Invalid contract source mode: ' + this.data.mode)
+      } else if (!this.data.src) {
+        throw new Error('You must provide contract source to deploy contract.')
+      }
+    }
 
     const content = {
       from: this.from,
