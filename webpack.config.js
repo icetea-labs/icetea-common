@@ -21,7 +21,7 @@ module.exports = {
     path: path.resolve(outDir),
     filename: outFile,
     libraryTarget: 'umd',
-    library: 'IceTeaCommon',
+    library: 'IceteaCommon',
     globalObject: 'this' // https://github.com/webpack/webpack/issues/6525
   },
   devtool: 'source-map',
