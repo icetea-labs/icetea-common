@@ -1,21 +1,48 @@
 const ecc = require('./ecc')
 const Tx = require('./Tx')
 const { toKeyBuffer, toDataString } = require('./codec')
+const { AccountType } = require('./enum')
 
-function newAccount () {
-  return getAccount(ecc.generateKeyBuffer())
+function newAccount (accountType) {
+  return getAccount(ecc.newKeyBuffers(accountType))
+}
+
+function newRegualarAccount () {
+  return newAccount(AccountType.REGULAR_ACCOUNT)
+}
+
+function newBankAccount () {
+  return newAccount(AccountType.BANK_ACCOUNT)
 }
 
 function getAccount (privateKey) {
-  if (!privateKey || !(typeof privateKey === 'string' || Buffer.isBuffer(privateKey))) {
+  if (!privateKey) {
+    throw new Error('Private key is required.')
+  }
+
+  let publicKey, address
+
+  // In case they pass in an object created by ecc.newKeyBuffers
+  if (privateKey.privateKey) {
+    publicKey = privateKey.publicKey
+    address = privateKey.address
+    privateKey = privateKey.privateKey
+  }
+
+  if (typeof privateKey !== 'string' && !Buffer.isBuffer(privateKey)) {
     throw new Error('Invalid private key. Private key must be a Buffer or a string.')
   }
+
+  // ensure private key is Buffer
   privateKey = toKeyBuffer(privateKey)
   if (privateKey.length !== 32) {
     throw new Error('Invalid private key length.')
   }
 
-  const { publicKey, address } = ecc.toPubKeyAndAddressBuffer(privateKey)
+  if (!publicKey || !address) {
+    ({ publicKey, address } = ecc.toPubKeyAndAddressBuffer(privateKey))
+  }
+
   const sign = function (message) {
     return ecc.sign(message, privateKey)
   }
@@ -71,4 +98,4 @@ function verifyTxSignature (tx, collectSigners = true) {
   }
 }
 
-module.exports = { signTransaction, verifyTxSignature, newAccount, getAccount }
+module.exports = { signTransaction, verifyTxSignature, newAccount, newRegualarAccount, newBankAccount, getAccount }

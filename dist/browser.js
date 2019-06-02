@@ -22152,14 +22152,38 @@ var _require = __webpack_require__(/*! ./codec */ "./src/codec.js"),
     toKeyBuffer = _require.toKeyBuffer,
     toDataString = _require.toDataString;
 
-function newAccount() {
-  return getAccount(ecc.generateKeyBuffer());
+var _require2 = __webpack_require__(/*! ./enum */ "./src/enum.js"),
+    AccountType = _require2.AccountType;
+
+function newAccount(accountType) {
+  return getAccount(ecc.newKeyBuffers(accountType));
+}
+
+function newRegualarAccount() {
+  return newAccount(AccountType.REGULAR_ACCOUNT);
+}
+
+function newBankAccount() {
+  return newAccount(AccountType.BANK_ACCOUNT);
 }
 
 function getAccount(privateKey) {
-  if (!privateKey || !(typeof privateKey === 'string' || Buffer.isBuffer(privateKey))) {
-    throw new Error('Invalid private key. Private key must be a Buffer or a string.');
+  if (!privateKey) {
+    throw new Error('Private key is required.');
   }
+
+  var publicKey, address; // In case they pass in an object created by ecc.newKeyBuffers
+
+  if (privateKey.privateKey) {
+    publicKey = privateKey.publicKey;
+    address = privateKey.address;
+    privateKey = privateKey.privateKey;
+  }
+
+  if (typeof privateKey !== 'string' && !Buffer.isBuffer(privateKey)) {
+    throw new Error('Invalid private key. Private key must be a Buffer or a string.');
+  } // ensure private key is Buffer
+
 
   privateKey = toKeyBuffer(privateKey);
 
@@ -22167,9 +22191,12 @@ function getAccount(privateKey) {
     throw new Error('Invalid private key length.');
   }
 
-  var _ecc$toPubKeyAndAddre = ecc.toPubKeyAndAddressBuffer(privateKey),
-      publicKey = _ecc$toPubKeyAndAddre.publicKey,
-      address = _ecc$toPubKeyAndAddre.address;
+  if (!publicKey || !address) {
+    var _ecc$toPubKeyAndAddre = ecc.toPubKeyAndAddressBuffer(privateKey);
+
+    publicKey = _ecc$toPubKeyAndAddre.publicKey;
+    address = _ecc$toPubKeyAndAddre.address;
+  }
 
   var sign = function sign(message) {
     return ecc.sign(message, privateKey);
@@ -22232,6 +22259,8 @@ module.exports = {
   signTransaction: signTransaction,
   verifyTxSignature: verifyTxSignature,
   newAccount: newAccount,
+  newRegualarAccount: newRegualarAccount,
+  newBankAccount: newBankAccount,
   getAccount: getAccount
 };
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../node_modules/buffer/index.js */ "./node_modules/buffer/index.js").Buffer))
