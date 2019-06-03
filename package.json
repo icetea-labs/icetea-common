@@ -1,22 +1,26 @@
 {
-  "name": "icetea-common",
-  "version": "0.1.10",
-  "description": "Common functions for icetea and icetea-web3.",
+  "name": "@iceteachain/common",
+  "version": "0.1.0",
+  "description": "Common functions for Icetea core and Icetea web3.",
   "sideEffects": false,
   "main": "src/index.js",
   "files": [
-    "src"
+    "src",
+    "dist"
   ],
   "browser": "dist/browser.js",
   "scripts": {
     "test": "standard --fix",
-    "build": "webpack"
+    "clean": "rimraf dist",
+    "prepare": "npm run clean && npm test && npm run build",
+    "build:dev": "webpack --env dev",
+    "build": "webpack --env prod"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/TradaTech/icetea-common.git"
   },
-  "author": "Trada Tech",
+  "author": "Trada Tech <iceteachain@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/TradaTech/icetea-common/issues"
@@ -40,6 +44,7 @@
     "@babel/core": "^7.4.5",
     "@babel/preset-env": "^7.4.5",
     "babel-loader": "^8.0.6",
+    "rimraf": "^2.6.3",
     "standard": "^12.0.1",
     "webpack": "^4.32.2",
     "webpack-bundle-analyzer": "^3.3.2",

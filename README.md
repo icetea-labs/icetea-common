@@ -8,17 +8,16 @@
 
 [![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)  
 
-Common stuff for IceTea server and client, like codec, curve, etc.
+Common stuff for Icetea blockchain and clients, like codec, curve, etc.
 
 ## Install
 ### NodeJS or Webpack/Browserify
 ```
-npm install TradaTech/icetea-common
+npm install @icetachain/common
 ```
-This package is not published to npmjs registry yet.
 ### <script> tags
 ```html
-<script src='https://cdn.jsdelivr.net/gh/TradaTech/icetea-common/dist/browser.js'></script>
+<script src="https://cdn.jsdelivr.net/npm/@iceteachain/common@0.1.0/dist/browser.min.js"></script>
 ```
 
 > **NOTE** This package is under developemnt and not ready for production.
