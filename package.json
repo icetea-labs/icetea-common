@@ -1,6 +1,6 @@
 {
   "name": "@iceteachain/common",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Common functions for Icetea core and Icetea web3.",
   "sideEffects": false,
   "main": "src/index.js",
@@ -12,7 +12,7 @@
   "scripts": {
     "test": "standard --fix",
     "clean": "rimraf dist",
-    "prepare": "npm run clean && npm test && npm run build",
+    "prepare": "npm run clean && npm test && npm run build:dev",
     "build:dev": "webpack --env dev",
     "build": "webpack --env prod"
   },
