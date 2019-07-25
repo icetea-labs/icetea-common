@@ -7,7 +7,7 @@ function newAccount (accountType) {
   return getAccount(ecc.newKeyBuffers(accountType))
 }
 
-function newRegualarAccount () {
+function newRegularAccount () {
   return newAccount(AccountType.REGULAR_ACCOUNT)
 }
 
@@ -98,4 +98,4 @@ function verifyTxSignature (tx, collectSigners = true) {
   }
 }
 
-module.exports = { signTransaction, verifyTxSignature, newAccount, newRegualarAccount, newBankAccount, getAccount }
+module.exports = { signTransaction, verifyTxSignature, newAccount, newRegularAccount, newBankAccount, getAccount }

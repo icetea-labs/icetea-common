@@ -1,4 +1,4 @@
-/*! @iceteachain/common v0.1.1 */
+/*! @iceteachain/common v0.1.2 */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -22159,7 +22159,7 @@ function newAccount(accountType) {
   return getAccount(ecc.newKeyBuffers(accountType));
 }
 
-function newRegualarAccount() {
+function newRegularAccount() {
   return newAccount(AccountType.REGULAR_ACCOUNT);
 }
 
@@ -22259,7 +22259,7 @@ module.exports = {
   signTransaction: signTransaction,
   verifyTxSignature: verifyTxSignature,
   newAccount: newAccount,
-  newRegualarAccount: newRegualarAccount,
+  newRegularAccount: newRegularAccount,
   newBankAccount: newBankAccount,
   getAccount: getAccount
 };
