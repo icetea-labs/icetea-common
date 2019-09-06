@@ -35,7 +35,7 @@
     "base-x": "^3.0.5",
     "create-hash": "^1.2.0",
     "json-stable-stringify": "^1.0.1",
-    "msgpack-lite": "^0.1.26",
+    "msgpack-lite": "github:tradatech/icetea-pack",
     "randombytes": "^2.1.0",
     "secp256k1": "^3.7.0"
   },
