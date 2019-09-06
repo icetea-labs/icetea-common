@@ -1,4 +1,4 @@
-/*! @iceteachain/common v0.1.2 */
+/*! @iceteachain/common v0.1.3 */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -14541,6 +14541,8 @@ function ExtBuffer(buffer, type) {
 
 // ext-packer.js
 
+/* global BigInt */
+
 exports.setExtPackers = setExtPackers;
 
 var Bufferish = __webpack_require__(/*! ./bufferish */ "./node_modules/msgpack-lite/lib/bufferish.js");
@@ -14586,6 +14588,10 @@ function setExtPackers(codec) {
 
     codec.addExtPacker(0x1A, ArrayBuffer, packTypedArray);
     codec.addExtPacker(0x1D, DataView, packTypedArray);
+
+    if ("undefined" !== typeof BigInt) {
+      codec.addExtPacker(0x1F, BigInt, [packBigInt, encode]);
+    }
   }
 
   if (Bufferish.hasBuffer) {
@@ -14596,6 +14602,10 @@ function setExtPackers(codec) {
 function encode(input) {
   if (!_encode) _encode = __webpack_require__(/*! ./encode */ "./node_modules/msgpack-lite/lib/encode.js").encode; // lazy load
   return _encode(input);
+}
+
+function packBigInt(value) {
+  return (value).toString();
 }
 
 function packValueOf(value) {
@@ -14629,6 +14639,8 @@ function packError(value) {
 /***/ (function(module, exports, __webpack_require__) {
 
 // ext-unpacker.js
+
+/* global BigInt */
 
 exports.setExtUnpackers = setExtUnpackers;
 
@@ -14674,6 +14686,8 @@ function setExtUnpackers(codec) {
 
     codec.addExtUnpacker(0x1A, unpackArrayBuffer);
     codec.addExtUnpacker(0x1D, [unpackArrayBuffer, unpackClass(DataView)]);
+
+    codec.addExtUnpacker(0x1F, [decode, unpackBigInt()]);
   }
 
   if (Bufferish.hasBuffer) {
@@ -14697,6 +14711,12 @@ function unpackError(Class) {
       out[key] = value[key];
     }
     return out;
+  };
+}
+
+function unpackBigInt() {
+  return function(value) {
+    return ("undefined" !== typeof BigInt) ? BigInt(value) : value;
   };
 }
 
@@ -15728,7 +15748,8 @@ function getWriteType(options) {
     "object": (useraw ? object_raw : object),
     "string": _string(useraw ? raw_head_size : str_head_size),
     "symbol": nil,
-    "undefined": nil
+    "undefined": nil,
+    "bigint": bigint
   };
 
   return writeType;
@@ -15852,6 +15873,11 @@ function getWriteType(options) {
 
     // plain old Objects or Map
     map(encoder, value);
+  }
+
+  function bigint(encoder, value) {
+    var packer = encoder.codec.getExtPacker(value);
+    return ext(encoder, packer(value));
   }
 
   function object_raw(encoder, value) {
