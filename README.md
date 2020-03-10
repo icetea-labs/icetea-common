@@ -17,7 +17,7 @@ npm install @icetachain/common
 ```
 ### <script> tags
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@iceteachain/common@0.1.5/dist/browser.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@iceteachain/common@0.1.6/dist/browser.min.js"></script>
 ```
 
 > **NOTE** This package is under developemnt and not ready for production.

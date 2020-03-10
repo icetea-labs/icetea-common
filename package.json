@@ -1,6 +1,6 @@
 {
   "name": "@iceteachain/common",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Common functions for Icetea core and Icetea web3.",
   "sideEffects": false,
   "main": "src/index.js",
@@ -37,7 +37,7 @@
     "json-stable-stringify": "^1.0.1",
     "msgpack-lite": "github:tradatech/icetea-pack",
     "randombytes": "^2.1.0",
-    "secp256k1": "^4.0.0"
+    "secp256k1": "3.8.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",
