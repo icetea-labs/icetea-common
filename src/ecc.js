@@ -127,7 +127,11 @@ const t = {
   },
 
   verify: function (hash32bytes, signature, pubKey) {
-    return secp256k1.verify(toDataBuffer(hash32bytes), toDataBuffer(signature), toKeyBuffer(pubKey))
+    const hash = toDataBuffer(hash32bytes)
+    if (hash.length !== 32) {
+      throw new Error('[Signature Verification] message must be a 32-byte hash.')
+    }
+    return secp256k1.verify(hash, toDataBuffer(signature), toKeyBuffer(pubKey))
   },
 
   sign: function (hash32bytes, privateKey) {
