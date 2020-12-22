@@ -65,6 +65,13 @@ function signTransaction (txData, privateKey) {
   const evidence = {}
 
   evidence.pubkey = ecc.toPublicKey(privateKey)
+
+  txData.evidence.forEach(e => {
+    if (e.pubkey === evidence.pubkey) {
+      throw new Error('[signTransaction] The transaction was already signed with the specified private key.')
+    }
+  })
+
   const tx = new Tx(txData)
   evidence.signature = toDataString(ecc.sign(tx.sigHash, privateKey).signature)
 
